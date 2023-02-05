@@ -1,0 +1,17 @@
+version: "2.3"
+services:
+  yolov5_trt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: "host"
+  
+    runtime: nvidia
+    volumes:
+      - ./ros:/home/ros
+
+    privileged: true
+    cap_add:
+      - ALL
+    ipc: host
+    tty: true
