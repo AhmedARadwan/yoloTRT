@@ -10,8 +10,12 @@ project(yolov5)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
+  cv_bridge
 )
 
+find_package(OpenCV REQUIRED)
+find_package(Threads)
+find_package(OpenMP REQUIRED)
 
 find_package(CUDA REQUIRED QUIET)
 include_directories(${CUDA_INCLUDE_DIRS})
@@ -27,12 +31,12 @@ message("Using TENSORRT_ROOT: ${TENSORRT_ROOT}")
 catkin_package()
 
 
-
-
-
 include_directories(
   include
   ${TENSORRT_ROOT}/include/
+  ${TENSORRT_ROOT}/samples/common
+
+  ${OpenCV_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -49,10 +53,13 @@ list(APPEND LINK_LIBRARY
             ${TENSORRT_ROOT}/lib
             nvinfer
             nvonnxparser
-            yaml-cpp
+            ${OpenCV_LIBS}
             )
 
 
-add_executable(yolo_ros src/yolo_ros.cpp src/yolov5_trt.cpp)
-target_link_libraries(yolo_ros ${LINK_LIBRARY} ${catkin_LIBRARIES})
+add_executable(yolo_ros 
+               src/yolo_ros.cpp 
+               src/yolov5_trt.cpp 
+               src/logger.cpp)
+target_link_libraries(yolo_ros ${LINK_LIBRARY} ${catkin_LIBRARIES} OpenMP::OpenMP_CXX)
 

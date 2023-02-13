@@ -63,7 +63,8 @@ RUN apt update && apt install -y python3-catkin-tools \
                                  python-rosinstall \
                                  python-rosinstall-generator \
                                  python-wstool \
-                                 build-essential
+                                 build-essential \
+                                 libopencv-dev
 
 # copy workspace inside docker
 COPY ros /home/ros
