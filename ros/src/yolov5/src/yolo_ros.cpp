@@ -31,9 +31,9 @@ int main(int argc, char **argv)
 
     pub = nh.advertise<sensor_msgs::Image>("/output", 10);
 
-    ros::Subscriber sub = nh.subscribe("/image_raw", 10, imageCallback);
+    ros::Subscriber sub = nh.subscribe("/videofile/image_raw", 10, imageCallback);
 
-    yolov5TRT yolotrt_("/home/ros/src/yolov5/model/engine_fp16.engine");
+    yolov5TRT yolotrt_("/home/ros/src/yolov5/model/engine.engine");
     yolotrt_ptr = &yolotrt_;
     ros::spin();
 

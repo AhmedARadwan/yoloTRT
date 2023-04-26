@@ -11,6 +11,7 @@
 #include <sys/time.h>
 #include <chrono>
 
+#include "boundingBox.h"
 
 #include <opencv2/opencv.hpp>
 #include <fstream>
@@ -69,7 +70,7 @@ class yolov5TRT{
         void preprocess(Mat image, float *data);
         Mat postprocess(Mat input_image, float *outputs, const vector<string> &class_name);
         void load_engine();
-        void draw_label(Mat& input_image, string label, int left, int top);
+        void draw_label(const std::vector<BoundingBox> &bboxes, cv::Mat &testImg);
         Mat infer(Mat image);
     
     private:
@@ -112,6 +113,14 @@ class yolov5TRT{
         std::vector<int> image_cols;
         std::vector<int> image_pad_rows;
         std::vector<int> image_pad_cols;
+
+        std::vector<cv::Scalar> colors{
+          cv::Scalar(56, 56, 255),
+          cv::Scalar(151, 157, 255),
+          cv::Scalar(31, 112, 255),
+          cv::Scalar(29, 178, 255),
+          cv::Scalar(49, 210, 207) 
+        };
         
 
         std::vector<std::string> coco_class_names = {
@@ -201,6 +210,8 @@ class yolov5TRT{
         };
 
 };
+
+
 
 
 
