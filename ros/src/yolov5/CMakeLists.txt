@@ -9,6 +9,7 @@ project(yolov5)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospack
   sensor_msgs
   cv_bridge
 )
@@ -24,11 +25,15 @@ if (CUDA_VERSION VERSION_LESS "11.0")
 else ()
   set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -std=c++14 -Wno-deprecated-gpu-targets)
 endif ()
+
 set(TENSORRT_ROOT /app/TensorRT-7.2.2.3)
 message("Using TENSORRT_ROOT: ${TENSORRT_ROOT}")
 
 
-catkin_package()
+catkin_package(
+  INCLUDE_DIRS include
+  CATKIN_DEPENDS roscpp
+)
 
 
 include_directories(
@@ -61,5 +66,5 @@ add_executable(yolo_ros
                src/yolo_ros.cpp 
                src/yolov5_trt.cpp 
                src/logger.cpp)
-target_link_libraries(yolo_ros ${LINK_LIBRARY} ${catkin_LIBRARIES} OpenMP::OpenMP_CXX)
+target_link_libraries(yolo_ros ${LINK_LIBRARY} ${catkin_LIBRARIES} ${rospack_LIBRARIES} OpenMP::OpenMP_CXX)
 

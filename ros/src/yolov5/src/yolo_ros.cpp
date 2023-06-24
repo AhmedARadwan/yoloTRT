@@ -3,6 +3,8 @@
 #include <sensor_msgs/image_encodings.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/Image.h>
+#include <ros/ros.h>
+#include <ros/package.h>
 
 yolov5TRT *yolotrt_ptr;
 ros::Publisher pub;
@@ -27,13 +29,17 @@ void imageCallback(const sensor_msgs::ImagePtr& data){
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "yolov5");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
+
+    std::string engine_filepath;
+
+    nh.getParam("engine_filepath", engine_filepath);
 
     pub = nh.advertise<sensor_msgs::Image>("/output", 10);
 
     ros::Subscriber sub = nh.subscribe("/videofile/image_raw", 10, imageCallback);
 
-    yolov5TRT yolotrt_("/home/ros/src/yolov5/model/engine.engine");
+    yolov5TRT yolotrt_(engine_filepath);
     yolotrt_ptr = &yolotrt_;
     ros::spin();
 

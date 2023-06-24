@@ -98,8 +98,7 @@ void yolov5TRT::draw_label(const std::vector<BoundingBox> &bboxes, cv::Mat &test
         auto color = colors[bboxes[k].cls % colors.size()];
         
         cv::rectangle(testImg, box_rect, color, 2);
-        //cv::putText(testImg, this->mClasses[bboxes[k].cls], cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX, 0.8, color, 1);
-        cv::putText(testImg, "lol", cv::Point(x, y), cv::FONT_HERSHEY_SIMPLEX, 0.5, color, 1);
+        cv::putText(testImg, coco_class_names[bboxes[k].cls], cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX, 0.8, color, 1);
         try
         {
             cv::Mat roi = testImg(box_rect);
@@ -115,21 +114,6 @@ void yolov5TRT::draw_label(const std::vector<BoundingBox> &bboxes, cv::Mat &test
         }
     }
 }
-// void yolov5TRT::draw_label(Mat& input_image, string label, int left, int top)
-// {
-//     // Display the label at the top of the bounding box.
-//     int baseLine;
-//     Size label_size = getTextSize(label, FONT_FACE, FONT_SCALE, THICKNESS, &baseLine);
-//     top = max(top, label_size.height);
-//     // Top left corner.
-//     Point tlc = Point(left, top);
-//     // Bottom right corner.
-//     Point brc = Point(left + label_size.width, top + label_size.height + baseLine);
-//     // Draw white rectangle.
-//     rectangle(input_image, tlc, brc, BLACK, FILLED);
-//     // Put the label on the black rectangle.
-//     putText(input_image, label, Point(left, top + label_size.height), FONT_FACE, FONT_SCALE, YELLOW, THICKNESS);
-// }
 
 /**
  * Function: preprocess the input image into buffer
@@ -251,49 +235,6 @@ Mat yolov5TRT::postprocess(Mat input_image, float *outputs, const vector<string>
     float y_factor = input_image.rows / INPUT_HEIGHT;
     float *data = outputs;
 
-
-    // const int dimensions = 85;
-    // // 25200 for default size 640.
-    // const int rows = 25200;
-    // // Iterate through 25200 detections.
-    // for (int i = 0; i < rows; ++i)
-    // {
-    //     float confidence = data[4];
-    //     // Discard bad detections and continue.
-    //     if (confidence >= CONFIDENCE_THRESHOLD)
-    //     {
-    //         float * classes_scores = data + 5;
-    //         // Create a 1x85 Mat and store class scores of 80 classes.
-    //         Mat scores(1, class_name.size(), CV_32FC1, classes_scores);
-    //         // Perform minMaxLoc and acquire the index of best class  score.
-    //         Point class_id;
-    //         double max_class_score;
-    //         minMaxLoc(scores, 0, &max_class_score, 0, &class_id);
-    //         // Continue if the class score is above the threshold.
-    //         if (max_class_score > SCORE_THRESHOLD)
-    //         {
-    //             // Store class ID and confidence in the pre-defined respective vectors.
-    //             confidences.push_back(confidence);
-    //             class_ids.push_back(class_id.x);
-    //             // Center.
-    //             float cx = data[0];
-    //             float cy = data[1];
-    //             // Box dimension.
-    //             float w = data[2];
-    //             float h = data[3];
-    //             // Bounding box coordinates.
-    //             int left = int((cx - 0.5 * w) * x_factor);
-    //             int top = int((cy - 0.5 * h) * y_factor);
-    //             int width = int(w * x_factor);
-    //             int height = int(h * y_factor);
-    //             // Store good detections in the boxes vector.
-    //             boxes.push_back(Rect(left, top, width, height));
-    //         }
-    //     }
-    //     // Jump to the next row.
-    //     data += dimensions;
-    // }
-
     int i = 0;
     int nc = 80;
     while (i < 25200)
@@ -359,36 +300,12 @@ Mat yolov5TRT::postprocess(Mat input_image, float *outputs, const vector<string>
         bboxes.emplace_back(box);
     }
 
-    // cv::Mat rgb_img;
-
-    // // Convert BGR to RGB
-    // cv::cvtColor(input_image, rgb_img, cv::COLOR_BGR2RGB);
-
     auto scaleSize = cv::Size(640, 640);
     cv::Mat resized;
     cv::resize(input_image, resized, scaleSize, 0, 0, cv::INTER_LINEAR);
 
     draw_label(bboxes, resized);
-
-
-
-
-    // for (int i = 0; i < indices.size(); i++)
-    // {
-    //     int idx = indices[i];
-    //     Rect box = boxes[i];
-    //     int left = box.x;
-    //     int top = box.y;
-    //     int width = box.width;
-    //     int height = box.height;
-    //     // Draw bounding box.
-    //     rectangle(input_image, Point(left, top), Point(left + width, top + height), BLUE, 3*THICKNESS);
-    //     // Get the label for the class name and its confidence.
-    //     string label = format("%.2f", confidences[idx]);
-    //     label = class_name[class_ids[idx]] + ":" + label;
-    //     // Draw class labels.
-    //     draw_label(input_image, label, left, top);
-    // }
+    
     return resized;
 }
 

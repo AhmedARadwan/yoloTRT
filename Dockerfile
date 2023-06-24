@@ -65,7 +65,10 @@ RUN apt update && apt install -y python3-catkin-tools \
                                  python-wstool \
                                  build-essential \
                                  libopencv-dev \
-                                 ros-melodic-cv-bridge
+                                 ros-${ROS_DISTRO}-cv-bridge \
+                                 ros-${ROS_DISTRO}-video-stream-opencv \
+                                 ros-${ROS_DISTRO}-rviz
+
 
 # copy workspace inside docker
 COPY ros /home/ros

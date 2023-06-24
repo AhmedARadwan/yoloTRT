@@ -1,0 +1,1 @@
+/app/TensorRT-7.2.2.3/bin/trtexec --onnx=YOLOv5s.onnx --fp16 --saveEngine=engine_fp16.engine
